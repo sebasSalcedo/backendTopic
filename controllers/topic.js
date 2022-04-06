@@ -71,9 +71,9 @@ var controller = {
   },
 
   /**
-   * 
-   * @param {*} req 
-   * @param {*} res 
+   *
+   * @param {*} req
+   * @param {*} res
    */
 
   getTopics: function (req, res) {
@@ -129,12 +129,88 @@ var controller = {
     });
   },
 
-  getMyTopics : function (req,res) {
+  /**
+   * 
+   * @param {*} req 
+   * @param {*} res 
+   */
+
+  getMyTopicsByUser: function (req, res) {
+    // Conseguir id del usuario
+
+    var userId = req.params.sub;
+
+    // Find con la condicion de Usuario
+
+    Topic.find({
+      user: userId,
+    })
+      .sort([["date", "descending"]])
+      .exec((err, topics) => {
+        // Devolver una respuesta
+        if (err) {
+          return res.status(500).send({
+            status: "error",
+            message: "Error en la consulta de los topics",
+          });
+        } else if (!topics) {
+          return res.status(404).send({
+            status: "error",
+            message: "No existe temas para mostrar",
+          });
+        } else {
+          return res.status(200).send({
+            status: "success",
+            message: "Consulta exitosa",
+            Topics: topics,
+          });
+        }
+      });
+  },
+
+  /**
+   * 
+   * @param {*} req 
+   * @param {*} res 
+   */
+
+  getTopic :function (req,res) {
+
+    // Sacar el id del topic de la url
+
+    var topicId = req.params.id;
+
+    // Find por id el topic
+
+    Topic.findById(topicId).populate('user').exec( (err,topic) => {
+
+      if (err) {
+        return res.status(500).send({
+          status: "error",
+          message: "Se ha presentado un error en la consulta",
+        });
+      } else if(!topic){
+
+        return res.status(404).send({
+          status: "error",
+          message: "No existe topic con ese  id registrado",
+        });
+        
+      }else{
+
+        return res.status(200).send({
+          status: "success",
+          message: "Se ha realizado con exito la consulta",
+          Topic: topic
+        });
+      }
+
+    });
 
     
-    
+
+   
   }
-
 
 };
 
