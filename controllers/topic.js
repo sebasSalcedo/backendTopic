@@ -130,9 +130,9 @@ var controller = {
   },
 
   /**
-   * 
-   * @param {*} req 
-   * @param {*} res 
+   *
+   * @param {*} req
+   * @param {*} res
    */
 
   getMyTopicsByUser: function (req, res) {
@@ -169,49 +169,50 @@ var controller = {
   },
 
   /**
-   * 
-   * @param {*} req 
-   * @param {*} res 
+   *
+   * @param {*} req
+   * @param {*} res
    */
 
-  getTopic :function (req,res) {
-
+  getTopic: function (req, res) {
     // Sacar el id del topic de la url
 
     var topicId = req.params.id;
 
     // Find por id el topic
 
-    Topic.findById(topicId).populate('user').exec( (err,topic) => {
+    Topic.findById(topicId)
+      .populate("user")
+      .exec((err, topic) => {
+        if (err) {
+          return res.status(500).send({
+            status: "error",
+            message: "Se ha presentado un error en la consulta",
+          });
+        } else if (!topic) {
+          return res.status(404).send({
+            status: "error",
+            message: "No existe topic con ese  id registrado",
+          });
+        } else {
+          return res.status(200).send({
+            status: "success",
+            message: "Se ha realizado con exito la consulta",
+            Topic: topic,
+          });
+        }
+      });
+  },
 
-      if (err) {
-        return res.status(500).send({
-          status: "error",
-          message: "Se ha presentado un error en la consulta",
-        });
-      } else if(!topic){
-
-        return res.status(404).send({
-          status: "error",
-          message: "No existe topic con ese  id registrado",
-        });
-        
-      }else{
-
-        return res.status(200).send({
-          status: "success",
-          message: "Se ha realizado con exito la consulta",
-          Topic: topic
-        });
-      }
-
+  update:function (req,res) {
+    
+    return res.status(200).send({
+      status: "success",
+      message: "update",
+      Topic: topic,
     });
 
-    
-
-   
-  }
-
+  },
 };
 
 module.exports = controller;
