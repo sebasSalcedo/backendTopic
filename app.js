@@ -13,6 +13,8 @@ var app = express();
 
 const user_routes = require('./routes/user');
 const topic_routes = require('./routes/topic');
+const comment_routes = require('./routes/comment');
+
 
 
 // Middlewares
@@ -26,6 +28,8 @@ app.use(bodyParser.json());
 
 app.use('/api',user_routes);
 app.use('/api',topic_routes);
+app.use('/api',comment_routes);
+
 
 // Rutas de prueba
 app.get("/prueba", (req, res) => {
