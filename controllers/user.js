@@ -34,13 +34,12 @@ var controller = {
     // 1. Recoger los parametros de la petición
 
     var params = req.body;
-
+    console.log(req.body);
     // 2. Validar los datos
     try {
-      var validate_name = !validator.isEmpty(params.name);
-      var validate_surname = !validator.isEmpty(params.surname);
-      var validate_email =
-        !validator.isEmpty(params.email) && validator.isEmail(params.email);
+      var validate_name     = !validator.isEmpty(params.name);
+      var validate_surname  = !validator.isEmpty(params.surname);
+      var validate_email    =  !validator.isEmpty(params.email) && validator.isEmail(params.email);
       var validate_password = !validator.isEmpty(params.password);
     } catch (err) {
       return res.status(400).send({
@@ -153,46 +152,50 @@ var controller = {
             message: "Email y/o contraseña no coinciden",
           });
         }
-        //si lo encuentra
-        // comprobar la contraseña (coincidencia de email y password / bcrypt)
 
-        // Si es Correcto
-
-        bcrypt.compare(params.password, user.password, (err, check) => {
-          if (err) {
-            return res.status(500).send({
-              message: "Se ha presentado un error a validar la contraseña",
-            });
-          }
-
-          if (check) {
-            // Generar token de jwt y devolverlo
-
-            if (params.gettoken) {
-              // Devolver los datos
-
-              return res.status(200).send({
-                token: jwt.createToken(user),
-              });
-            } else {
-              //quitar datos que se envian en la respuesta del objeto
-
-              user.password = undefined;
-
-              // Devolver los datos
-
-              return res.status(200).send({
-                message: "Success",
-                user,
+        else{
+          bcrypt.compare(params.password, user.password, (err, check) => {
+            if (err) {
+              return res.status(500).send({
+                message: "Se ha presentado un error a validar la contraseña",
               });
             }
-          } else {
-            return res.status(500).send({
-              message: "Contraseña incorrecta",
-              user,
-            });
-          }
-        });
+
+            let dataUser = user;
+            if (check) {
+              // Generar token de jwt y devolverlo
+  
+              if (user) {
+                // Devolver los datos
+  
+                return res.status(200).send({
+                  user:dataUser,
+
+                  token: jwt.createToken(user),
+                });
+              } else {
+                //quitar datos que se envian en la respuesta del objeto
+  
+                user.password = undefined;
+  
+                // Devolver los datos
+  
+                return res.status(200).send({
+                  message: "Success",
+                  user:dataUser
+                  
+                });
+              }
+            } else {
+              return res.status(500).send({
+                message: "Contraseña incorrecta",
+                
+              });
+            }
+          });
+        }
+
+      
       });
     } else {
       return res.status(500).send({
