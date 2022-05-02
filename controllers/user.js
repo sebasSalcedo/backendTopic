@@ -158,41 +158,49 @@ var controller = {
 
         // Si es Correcto
 
-        bcrypt.compare(params.password, user.password, (err, check) => {
-          if (err) {
-            return res.status(500).send({
-              message: "Se ha presentado un error a validar la contraseña",
-            });
-          }
+        else {
 
-          if (check) {
-            // Generar token de jwt y devolverlo
-
-            if (params.gettoken) {
-              // Devolver los datos
-
-              return res.status(200).send({
-                token: jwt.createToken(user),
+          bcrypt.compare(params.password, user.password, (err, check) => {
+            if (err) {
+              return res.status(500).send({
+                message: "Se ha presentado un error a validar la contraseña",
               });
+            }
+              let userData = user; 
+            if (check) {
+              // Generar token de jwt y devolverlo
+  
+              if (userData) {
+                // Devolver los datos
+  
+                return res.status(200).send({
+                  token: jwt.createToken(user),
+                  user:userData
+                });
+              } else {
+                //quitar datos que se envian en la respuesta del objeto
+  
+                user.password = undefined;
+  
+                // Devolver los datos
+  
+                return res.status(200).send({
+                  message: "Success",
+                  user,
+                });
+              }
             } else {
-              //quitar datos que se envian en la respuesta del objeto
-
-              user.password = undefined;
-
-              // Devolver los datos
-
-              return res.status(200).send({
-                message: "Success",
+              return res.status(500).send({
+                message: "Contraseña incorrecta",
                 user,
               });
             }
-          } else {
-            return res.status(500).send({
-              message: "Contraseña incorrecta",
-              user,
-            });
-          }
-        });
+          });
+          
+
+        }
+
+       
       });
     } else {
       return res.status(500).send({

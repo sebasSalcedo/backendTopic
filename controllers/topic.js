@@ -11,9 +11,9 @@ var controller = {
   },
 
   /**
-   * Metodo que permite guardar un topic
-   * @param {*} req
-   * @param {*} res
+   * Metodo que permite guardar un topic 
+   * @param {*} req request 
+   * @param {*} res respuesta
    * @returns
    */
   save: function (req, res) {
